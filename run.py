@@ -72,9 +72,10 @@ def calculate_returnsales_data(dispatched_row):
     last supply list.
     """
     print("Calculating returnsales data...\n")
-    returnsales = SHEET.worksheet("returnsales").get_all_values()
-    returnsales_row = returnsales[-1]
-    print(returnsales_row)
+    dispatched = SHEET.worksheet("dispatched").get_all_values()
+    dispatched_row = dispatched[-1]
+    print(f"dispatched_row: {dispatched_row}")
+    print(f"returnsales row: {dispatched_row}")
 
 
 def main():
