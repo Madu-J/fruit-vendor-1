@@ -18,7 +18,7 @@ def get_dispatched_data():
     Get dispatched figure input from list
     """
     while True:
-       print("Calculate dispatched from stock list.")
+       print("Calculate dispatched figure from  worksheet.")
        print("Data should be ten numbers separated by commas.")
        print("Example: 475,475,500,470,600,580,400,160,420,480\n")
 
@@ -53,4 +53,16 @@ def validate_data(values):
     return True
 
 
+def update_dispatched_worksheet(data):
+    """
+    Update dispatched worksheet, add a new row with the list provided.
+    """
+    print("Updating dispatched worksheet...\n")
+    dispatched_worksheet = SHEET.worksheet("dispatched")
+    dispatched_worksheet.append_row(data)
+    print("dispatched worksheet updated successfully.\n")
+
+
 data = get_dispatched_data()
+dispatched_data = [int(num) for num in data]
+update_dispatched_worksheet(dispatched_data)
