@@ -1,5 +1,6 @@
 import gspread
 from google.oauth2.service_account import Credentials
+from pprint import pprint
 
 SCOPE = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -18,7 +19,7 @@ def get_dispatched_data():
     Get dispatched figure input from list
     """
     while True:
-       print("Calculate dispatched figure from  worksheet.")
+       print("Getting dispatched figure from  worksheet.")
        print("Data should be ten numbers separated by commas.")
        print("Example: 475,475,500,470,600,580,400,160,420,480\n")
 
@@ -63,6 +64,28 @@ def update_dispatched_worksheet(data):
     print("dispatched worksheet updated successfully.\n")
 
 
-data = get_dispatched_data()
-dispatched_data = [int(num) for num in data]
-update_dispatched_worksheet(dispatched_data)
+def calculate_returnsales_data(dispatched_row):
+    """
+    Compare dispatched with stock and calculate returnsales for records.
+
+    The returnsales is to be subtracted from the dispatched items of the
+    last supply list.
+    """
+    print("Calculating returnsales data...\n")
+    returnsales = SHEET.worksheet("returnsales").get_all_values()
+    returnsales_row = returnsales[-1]
+    print(returnsales_row)
+
+
+def main():
+    """
+    Run all program functions
+    """
+    data = get_dispatched_data()
+    dispatched_data = [int(num) for num in data]
+    update_dispatched_worksheet(dispatched_data)
+    calculate_returnsales_data(dispatched_data)
+
+
+print("Welcome to Fruit Vendor Net")
+main()
