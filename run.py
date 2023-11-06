@@ -6,7 +6,7 @@ SCOPE = [
     "https://www.googleapis.com/auth/spreadsheets",
     "https://www.googleapis.com/auth/drive.file",
     "https://www.googleapis.com/auth/drive"
-    ]   
+    ]
 
 CREDS = Credentials.from_service_account_file('creds.json')
 SCOPED_CREDS = CREDS.with_scopes(SCOPE)
@@ -19,17 +19,17 @@ def get_dispatched_data():
     Get dispatched figure input from list
     """
     while True:
-       print("Getting dispatched figure from  worksheet.")
-       print("Data should be ten numbers separated by commas.")
-       print("Example: 475,475,500,470,600,580,400,160,420,480\n")
+        print("Getting dispatched figure from  worksheet.")
+        print("Data should be ten numbers separated by commas.")
+        print("Example: 475,475,500,470,600,580,400,160,420,480\n")
 
-       data_str = input("Enter your data here: ")
+        data_str = input("Enter your data here: ")
 
-       dispatched_data = data_str.split(",")
+        dispatched_data = data_str.split(",")
 
-       if validate_data(dispatched_data):
-        print("Data is valid!")
-        break
+        if validate_data(dispatched_data):
+            print("Data is valid!")
+            break
 
     return dispatched_data
 
@@ -47,45 +47,79 @@ def validate_data(values):
             raise ValueError(
                 f"Exactly 10 values required, you provided {len(values)}"
             )
-    except ValueError as e:
-        print(f"Invalid data: {e}, please try again.\n")
+    except ValueError as error:
+        print(f"Invalid data: {error}, please try again.\n")
         return False
 
     return True
 
 
-def update_dispatched_worksheet(data):
+def update_worksheet(data, worksheet):
     """
-    Update dispatched worksheet, add a new row with the list provided.
+    Receive list of integers to be inserted into a worksheet.
+    Update relevant worksheet with the list provided.
     """
-    print("Updating dispatched worksheet...\n")
-    dispatched_worksheet = SHEET.worksheet("dispatched")
-    dispatched_worksheet.append_row(data)
-    print("dispatched worksheet updated successfully.\n")
+    print(f"Updating {worksheet} worksheet...\n")
+    worksheet_to_update = SHEET.worksheet("worksheet")
+    worksheet_to_update.append_row(data)
+    print(f"{worksheet} worksheet updated successfully.\n")
 
 
 def calculate_returnsales_data(dispatched_row):
     """
-    Compare dispatched with stock and calculate returnsales for records.
-
-    The returnsales is to be subtracted from the dispatched items of the
-    last supply list.
+    Collecting figure of returnsales  from the dispatched items in the
+    last supply.
     """
     print("Calculating returnsales data...\n")
-    dispatched = SHEET.worksheet("dispatched").get_all_values()
-    dispatched_row = dispatched[-1]
-    print(f"dispatched_row: {dispatched_row}")
-    print(f"returnsales row: {dispatched_row}")
+    stock = SHEET.worksheet("stock").get_all_values()
+    stock_row = stock[-1]
+
+    returnsales_data = []
+    for dispatched, stock in zip(dispatched_row, stock_row):
+        returnsales = int(stock) - dispatched
+        returnsales_data.append(returnsales)
+
+    return returnsales_data
+
+
+def get_last_3_entries_dispatched():
+    """
+    Collects columns of data from dispatche worksheet, collecting the last 3
+    entries for each fruit and returns the data as a list of lists.
+    """
+    dispatched = SHEET.worksheet("dispatched")
+
+    columns = []
+    for ind in range(1, 11):
+        column = dispatched.col_values(ind)
+        column.append(column[-3:])
+
+    return columns
+
+
+def calculate_stock_data(data):
+    """
+    Calculate average stock adding 10%
+    """
+    print("Calculating stock data...\n")
+    new_stock_data = []
+
+    for column in data:
+        int_column = [int(num) for num in column]
+        average = sum(int_column) / len(int_column)
+        stock_num = average * 1.1
+        new_stock_data.append(stock_num)
 
 
 def main():
     """
-    Run all program functions
+    Run all program functions.
     """
     data = get_dispatched_data()
     dispatched_data = [int(num) for num in data]
-    update_dispatched_worksheet(dispatched_data)
-    calculate_returnsales_data(dispatched_data)
+    update_worksheet(dispatched_data, "dispatched")
+    new_returnsales_data = calculate_returnsales_data(dispatched_data)
+    update_worksheet(new_returnsales_data, "returnsales")
 
 
 print("Welcome to Fruit Vendor Net")
