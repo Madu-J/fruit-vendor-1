@@ -18,14 +18,20 @@ def get_dispatch_data():
     """
     Get dispatch figure input from list
     """
-    print("Get dispatch data from  last supply.")
-    print("Data should be ten numbers separated by commas.")
-    print("Example: 475,475,500,470,600,580,400,160,420,480\n")
+    while True:
+        print("Get dispatch data from  last supply.")
+        print("Data should be ten numbers separated by commas.")
+        print("Example: 475,475,500,470,600,580,400,160,420,480\n")
 
-    data_str = input("Enter your data here: ")
+        data_str = input("Enter your data here: ")
 
-    dispatch_data = data_str.split(",")
-    validate_data(dispatch_data)
+        dispatch_data = data_str.split(",")
+
+        if validate_data(dispatch_data):
+            print("Data is valid!")
+            break
+    
+    return dispatch_data
 
 
 def validate_data(values):
@@ -43,6 +49,9 @@ def validate_data(values):
             )
     except ValueError as e:
         print(f"Invalid data: {e}, please try again.\n")
+        return False
+    
+    return True
 
 
-get_dispatch_data()
+data = get_dispatch_data()
