@@ -1,7 +1,5 @@
 import gspread
 from google.oauth2.service_account import Credentials
-from pprint import pprint
-
 
 SCOPE = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -73,7 +71,13 @@ def calculate_returnsales_data(dispatched_row):
     print("Calculating returnsales data...\n")
     stock = SHEET.worksheet("stock").get_all_values()
     stock_row = [-1]
-    print(stock_row)
+
+    returnsales_data = []
+    for stock, dispatch in zip(stock_row, "dispatch_row"):
+        returnsales = int(stock) - dispatch
+        returnsales_data.append(returnsales)
+    
+    return returnsales_data
 
 
 def main():
@@ -83,8 +87,9 @@ def main():
     data = get_dispatch_data()
     dispatch_data = [int(num) for num in data]
     update_dispatch_worksheet(dispatch_data)
-    calculate_returnsales_data(dispatch_data)
+    new_returnsales_data = calculate_returnsales_data(dispatch_data)
+    print(new_returnsales_data)
 
-
+   
 print("Welcome to Fruit Vendor Net")
 main()
