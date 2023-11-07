@@ -1,5 +1,6 @@
 import gspread
 from google.oauth2.service_account import Credentials
+from pprint import pprint
 
 
 SCOPE = [
@@ -64,6 +65,26 @@ def update_dispatch_worksheet(data):
     print("dispatch worksheet updated successfully.\n")
 
 
-data = get_dispatch_data()
-dispatch_data = [int(num) for num in data]
-update_dispatch_worksheet(dispatch_data)
+def calculate_returnsales_data(dispatched_row):
+    """
+    Collecting figure of returnsales  from the dispatched items in the
+    last supply.
+    """
+    print("Calculating returnsales data...\n")
+    stock = SHEET.worksheet("stock").get_all_values()
+    stock_row = [-1]
+    print(stock_row)
+
+
+def main():
+    """
+    Run all program functions.
+    """
+    data = get_dispatch_data()
+    dispatch_data = [int(num) for num in data]
+    update_dispatch_worksheet(dispatch_data)
+    calculate_returnsales_data(dispatch_data)
+
+
+print("Welcome to Fruit Vendor Net")
+main()
