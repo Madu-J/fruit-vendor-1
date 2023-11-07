@@ -30,7 +30,7 @@ def get_dispatch_data():
         if validate_data(dispatch_data):
             print("Data is valid!")
             break
-    
+
     return dispatch_data
 
 
@@ -50,8 +50,20 @@ def validate_data(values):
     except ValueError as e:
         print(f"Invalid data: {e}, please try again.\n")
         return False
-    
+
     return True
 
 
+def update_dispatch_worksheet(data):
+    """
+    Update dispatch worksheet, add new row with data provided.
+    """
+    print("updating dispatch worksheet...\n")
+    dispatch_worksheet = SHEET.worksheet("dispatch")
+    dispatch_worksheet.append_row(data)
+    print("dispatch worksheet updated successfully.\n")
+
+
 data = get_dispatch_data()
+dispatch_data = [int(num) for num in data]
+update_dispatch_worksheet(dispatch_data)
